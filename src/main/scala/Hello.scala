@@ -15,7 +15,8 @@ class Hello extends Module {
     val led1 = Output(UInt(1.W))
     val led2 = Output(UInt(1.W))
   })
-  val CNT_MAX = 12_000_000.U
+
+  val CNT_MAX = 10_000.U
 
   val cntReg = RegInit(0.U(32.W))
   val blkReg1 = RegInit(0.U(1.W))
@@ -27,6 +28,7 @@ class Hello extends Module {
     blkReg1 := ~blkReg1
     blkReg2 := blkReg1
   }
+
   io.led1 := blkReg1
   io.led2 := blkReg2
 }
