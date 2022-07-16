@@ -50,14 +50,17 @@ class BubbleFifoTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.clock.step(6)
 
         // Now read out the whole buffer.
-        // Also watch that meximum read out is every second clock cycle.
+        // Also watch that maximum read out is every second clock cycle.
         for (i <- 0 until 7) {
           empty = dut.io.deq.empty.peek.litToBoolean
           dut.io.deq.read.poke((!empty).B)
+          if (!empty) {
+            dut.io.deq.dout.expect((0x80 + i).U)
+          }
           dut.clock.step()
         }
 
-        // Now read the write at maximum speed for some time.
+        // Now write and read at maximum speed for some time.
         for (i <- 1 until 16) {
           full = dut.io.enq.full.peek.litToBoolean
           dut.io.enq.din.poke(i.U)
