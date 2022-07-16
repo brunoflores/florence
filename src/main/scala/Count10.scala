@@ -2,8 +2,8 @@ import chisel3._
 
 class Count10 extends Module {
   val io = IO(new Bundle {
-                val dout = Output(UInt(8.W))
-              })
+    val dout = Output(UInt(8.W))
+  })
 
   val add = Module(new Adder())
   val reg = Module(new Register())

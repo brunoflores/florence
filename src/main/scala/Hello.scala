@@ -6,9 +6,8 @@
 
 import chisel3._
 
-/**
- * The blinking LED component.
- */
+/** The blinking LED component.
+  */
 
 class Hello extends Module {
   val io = IO(new Bundle {
@@ -33,10 +32,9 @@ class Hello extends Module {
   io.led2 := blkReg2
 }
 
-/**
- * An object extending App to generate the Verilog code.
- */
+/** An object extending App to generate the Verilog code.
+  */
 object Hello extends App {
-  (new chisel3.stage.ChiselStage).emitVerilog(
-    new Hello(), Array("--target-dir", "generated"))
+  (new chisel3.stage.ChiselStage)
+    .emitVerilog(new Hello(), Array("--target-dir", "generated"))
 }
