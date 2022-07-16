@@ -5,7 +5,7 @@ class Count10 extends Module {
     val dout = Output(UInt(8.W))
   })
 
-  val add = Module(new Adder())
+  val add = Module(new Adder(8))
   val reg = Module(new Register())
 
   // Name the output of the register.
