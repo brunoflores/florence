@@ -9,27 +9,27 @@ module Hello(
   reg [31:0] _RAND_1;
   reg [31:0] _RAND_2;
 `endif // RANDOMIZE_REG_INIT
-  reg [31:0] cntReg; // @[Hello.scala 20:23]
-  reg  blkReg1; // @[Hello.scala 21:24]
-  reg  blkReg2; // @[Hello.scala 22:24]
-  wire [31:0] _cntReg_T_1 = cntReg + 32'h1; // @[Hello.scala 24:20]
-  wire  _GEN_2 = cntReg == 32'hb71b00 ? blkReg1 : blkReg2; // @[Hello.scala 25:28 28:13 22:24]
-  assign io_led1 = blkReg1; // @[Hello.scala 30:11]
-  assign io_led2 = blkReg2; // @[Hello.scala 31:11]
+  reg [31:0] cntReg; // @[Hello.scala 21:23]
+  reg  blkReg1; // @[Hello.scala 22:24]
+  reg  blkReg2; // @[Hello.scala 23:24]
+  wire [31:0] _cntReg_T_1 = cntReg + 32'h1; // @[Hello.scala 25:20]
+  wire  _GEN_2 = cntReg == 32'h2710 ? blkReg1 : blkReg2; // @[Hello.scala 26:28 29:13 23:24]
+  assign io_led1 = blkReg1; // @[Hello.scala 32:11]
+  assign io_led2 = blkReg2; // @[Hello.scala 33:11]
   always @(posedge clock) begin
-    if (reset) begin // @[Hello.scala 20:23]
-      cntReg <= 32'h0; // @[Hello.scala 20:23]
-    end else if (cntReg == 32'hb71b00) begin // @[Hello.scala 25:28]
-      cntReg <= 32'h0; // @[Hello.scala 26:12]
+    if (reset) begin // @[Hello.scala 21:23]
+      cntReg <= 32'h0; // @[Hello.scala 21:23]
+    end else if (cntReg == 32'h2710) begin // @[Hello.scala 26:28]
+      cntReg <= 32'h0; // @[Hello.scala 27:12]
     end else begin
-      cntReg <= _cntReg_T_1; // @[Hello.scala 24:10]
+      cntReg <= _cntReg_T_1; // @[Hello.scala 25:10]
     end
-    if (reset) begin // @[Hello.scala 21:24]
-      blkReg1 <= 1'h0; // @[Hello.scala 21:24]
-    end else if (cntReg == 32'hb71b00) begin // @[Hello.scala 25:28]
-      blkReg1 <= ~blkReg1; // @[Hello.scala 27:13]
+    if (reset) begin // @[Hello.scala 22:24]
+      blkReg1 <= 1'h0; // @[Hello.scala 22:24]
+    end else if (cntReg == 32'h2710) begin // @[Hello.scala 26:28]
+      blkReg1 <= ~blkReg1; // @[Hello.scala 28:13]
     end
-    blkReg2 <= reset | _GEN_2; // @[Hello.scala 22:{24,24}]
+    blkReg2 <= reset | _GEN_2; // @[Hello.scala 23:{24,24}]
   end
 // Register and memory initialization
 `ifdef RANDOMIZE_GARBAGE_ASSIGN
