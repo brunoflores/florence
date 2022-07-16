@@ -1,6 +1,8 @@
 *.class
 *.log
 .bsp/
+.bloop/
+.metals/
 target/
 project/
 test_run_dir/
