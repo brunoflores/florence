@@ -1,0 +1,25 @@
+import chisel3._
+
+class PopCount extends Module {
+  val io = IO(new Bundle {
+    val dinValid = Input(Bool())
+    val dinReady = Output(Bool())
+    val din = Input(UInt(8.W))
+    val popCntValid = Output(Bool())
+    val popCntReady = Input(Bool())
+    val popCnt = Output(UInt(4.W))
+  })
+
+  val fsm = Module(new PopCountFSM)
+  val data = Module(new PopCountDataPath)
+
+  fsm.io.dinValid := io.dinValid
+  io.dinReady := fsm.io.dinReady
+  io.popCntValid := fsm.io.popCntValid
+  fsm.io.popCntReady := io.popCntReady
+
+  data.io.din := io.din
+  io.popCnt := data.io.popCnt
+  data.io.load := fsm.io.load
+  fsm.io.done := data.io.done
+}
