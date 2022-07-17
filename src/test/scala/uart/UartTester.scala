@@ -7,9 +7,8 @@ class UartSenderTests extends AnyFlatSpec with ChiselScalatestTester {
   "UartSender" should "work" in {
     test(new Sender(10_000, 3_000)).withAnnotations(Seq(WriteVcdAnnotation)) {
       dut =>
-        var bytes = List[Char]()
         val want = "Hello World!"
-        for (n <- 0 until want.length()) {
+        val bytes = for (n <- 0 until want.length()) yield {
           var byte: Int = 0;
 
           // Wait for start bit
@@ -29,9 +28,9 @@ class UartSenderTests extends AnyFlatSpec with ChiselScalatestTester {
           // Stop bit
           dut.io.txd.expect(1.U)
 
-          bytes = byte.toChar :: bytes
+          byte.toChar
         }
-        val got = bytes.reverse.foldLeft("")(_ + _)
+        val got = bytes.foldLeft("")(_ + _)
         assert(got == want)
     }
   }
