@@ -8,7 +8,7 @@ class UartSenderTests extends AnyFlatSpec with ChiselScalatestTester {
     test(new Sender(10_000, 3_000)).withAnnotations(Seq(WriteVcdAnnotation)) {
       dut =>
         val want = "Hello World!"
-        val bytes = for (n <- 0 until want.length()) yield {
+        val bytes = for (_ <- 0 until want.length()) yield {
           var byte: Int = 0;
 
           // Wait for start bit
