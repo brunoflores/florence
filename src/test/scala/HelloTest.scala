@@ -4,7 +4,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 class HelloTest extends AnyFlatSpec with ChiselScalatestTester {
   behavior of "Hello"
   it should "pass" in {
-    test(new Hello) { c =>
+    test(new Hello).withAnnotations(Seq(WriteVcdAnnotation)) { c =>
       c.clock.setTimeout(0)
       var ledStatus = BigInt(-1)
       println("Start the blinking LED")
