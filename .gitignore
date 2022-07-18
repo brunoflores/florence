@@ -6,3 +6,4 @@
 target/
 project/
 test_run_dir/
+vivado/
