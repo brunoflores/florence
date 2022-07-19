@@ -270,15 +270,15 @@ module Hello(
   wire [31:0] _cntReg_T_1 = cntReg + 32'h1; // @[Hello.scala 29:20]
   wire  _GEN_2 = cntReg == 32'hb71b00 ? blkReg1 : blkReg2; // @[Hello.scala 30:28 34:13 18:24]
   wire  _GEN_3 = cntReg == 32'hb71b00 | startTxReg; // @[Hello.scala 30:28 36:16 26:27]
-  wire  _GEN_5 = startTxReg | runningTxReg; // @[Hello.scala 40:31 42:18 27:29]
-  wire [6:0] _GEN_8 = txCntReg[0] ? 7'h4e : 7'h4f; // @[Hello.scala 47:{19,19}]
-  wire [6:0] _GEN_10 = 2'h1 == txCntReg[1:0] ? 7'h46 : 7'h4f; // @[Hello.scala 50:{19,19}]
-  wire [6:0] _GEN_11 = 2'h2 == txCntReg[1:0] ? 7'h46 : _GEN_10; // @[Hello.scala 50:{19,19}]
-  wire [1:0] _GEN_12 = blkReg1 ? 2'h2 : 2'h3; // @[Hello.scala 45:25 46:14 49:14]
-  wire [6:0] _GEN_13 = blkReg1 ? _GEN_8 : _GEN_11; // @[Hello.scala 45:25 47:19 50:19]
-  wire  _T_3 = txCntReg != txLenReg; // @[Hello.scala 52:35]
-  wire [7:0] _txCntReg_T_1 = txCntReg + 8'h1; // @[Hello.scala 53:26]
-  wire  _GEN_16 = _T_3 & _GEN_5; // @[Hello.scala 56:33 59:20]
+  wire  _GEN_5 = startTxReg | runningTxReg; // @[Hello.scala 39:31 41:18 27:29]
+  wire [6:0] _GEN_8 = txCntReg[0] ? 7'h4e : 7'h4f; // @[Hello.scala 46:{19,19}]
+  wire [6:0] _GEN_10 = 2'h1 == txCntReg[1:0] ? 7'h46 : 7'h4f; // @[Hello.scala 49:{19,19}]
+  wire [6:0] _GEN_11 = 2'h2 == txCntReg[1:0] ? 7'h46 : _GEN_10; // @[Hello.scala 49:{19,19}]
+  wire [1:0] _GEN_12 = blkReg1 ? 2'h2 : 2'h3; // @[Hello.scala 44:25 45:14 48:14]
+  wire [6:0] _GEN_13 = blkReg1 ? _GEN_8 : _GEN_11; // @[Hello.scala 44:25 46:19 49:19]
+  wire  _T_3 = txCntReg != txLenReg; // @[Hello.scala 51:35]
+  wire [7:0] _txCntReg_T_1 = txCntReg + 8'h1; // @[Hello.scala 52:26]
+  wire  _GEN_16 = _T_3 & _GEN_5; // @[Hello.scala 55:33 58:20]
   BufferedTx tx ( // @[Hello.scala 13:18]
     .clock(tx_clock),
     .reset(tx_reset),
@@ -287,12 +287,12 @@ module Hello(
     .io_in_bits(tx_io_in_bits),
     .io_txd(tx_io_txd)
   );
-  assign io_led1 = blkReg1; // @[Hello.scala 66:11]
-  assign io_led2 = blkReg2; // @[Hello.scala 67:11]
+  assign io_led1 = blkReg1; // @[Hello.scala 65:11]
+  assign io_led2 = blkReg2; // @[Hello.scala 66:11]
   assign io_txd = tx_io_txd; // @[Hello.scala 14:10]
   assign tx_clock = clock;
   assign tx_reset = reset;
-  assign tx_io_in_valid = runningTxReg & _T_3; // @[Hello.scala 55:33 63:20]
+  assign tx_io_in_valid = runningTxReg & _T_3; // @[Hello.scala 54:33 62:20]
   assign tx_io_in_bits = {{1'd0}, _GEN_13};
   always @(posedge clock) begin
     if (reset) begin // @[Hello.scala 16:23]
@@ -310,10 +310,10 @@ module Hello(
     blkReg2 <= reset | _GEN_2; // @[Hello.scala 18:{24,24}]
     if (reset) begin // @[Hello.scala 24:25]
       txCntReg <= 8'h0; // @[Hello.scala 24:25]
-    end else if (tx_io_in_ready & txCntReg != txLenReg) begin // @[Hello.scala 52:49]
-      txCntReg <= _txCntReg_T_1; // @[Hello.scala 53:14]
-    end else if (startTxReg) begin // @[Hello.scala 40:31]
-      txCntReg <= 8'h0; // @[Hello.scala 43:14]
+    end else if (tx_io_in_ready & txCntReg != txLenReg) begin // @[Hello.scala 51:49]
+      txCntReg <= _txCntReg_T_1; // @[Hello.scala 52:14]
+    end else if (startTxReg) begin // @[Hello.scala 39:31]
+      txCntReg <= 8'h0; // @[Hello.scala 42:14]
     end
     if (reset) begin // @[Hello.scala 25:25]
       txLenReg <= 8'h0; // @[Hello.scala 25:25]
@@ -322,14 +322,14 @@ module Hello(
     end
     if (reset) begin // @[Hello.scala 26:27]
       startTxReg <= 1'h0; // @[Hello.scala 26:27]
-    end else if (startTxReg) begin // @[Hello.scala 40:31]
-      startTxReg <= 1'h0; // @[Hello.scala 41:16]
+    end else if (startTxReg) begin // @[Hello.scala 39:31]
+      startTxReg <= 1'h0; // @[Hello.scala 40:16]
     end else begin
       startTxReg <= _GEN_3;
     end
     if (reset) begin // @[Hello.scala 27:29]
       runningTxReg <= 1'h0; // @[Hello.scala 27:29]
-    end else if (runningTxReg) begin // @[Hello.scala 55:33]
+    end else if (runningTxReg) begin // @[Hello.scala 54:33]
       runningTxReg <= _GEN_16;
     end else begin
       runningTxReg <= _GEN_5;
