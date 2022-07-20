@@ -15,19 +15,19 @@ class BubbleFifoTest extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.enq.write.poke(false.B)
         dut.io.deq.read.poke(false.B)
         dut.clock.step()
-        var full = dut.io.enq.full.peek.litToBoolean
-        var empty = dut.io.deq.empty.peek.litToBoolean
+        var full = dut.io.enq.full.peek().litToBoolean
+        var empty = dut.io.deq.empty.peek().litToBoolean
 
         // Write into the buffer
         dut.io.enq.din.poke("h12".U)
         dut.io.enq.write.poke(true.B)
         dut.clock.step()
-        full = dut.io.enq.full.peek.litToBoolean
+        full = dut.io.enq.full.peek().litToBoolean
 
         dut.io.enq.din.poke("hff".U)
         dut.io.enq.write.poke(false.B)
         dut.clock.step()
-        full = dut.io.enq.full.peek.litToBoolean
+        full = dut.io.enq.full.peek().litToBoolean
 
         // Bubbling of the first element
         dut.clock.step()
@@ -35,7 +35,7 @@ class BubbleFifoTest extends AnyFlatSpec with ChiselScalatestTester {
         // Fill the whole buffer with a check for full condition.
         // Only every second cycle a write can happen.
         for (i <- 0 until 7) {
-          full = dut.io.enq.full.peek.litToBoolean
+          full = dut.io.enq.full.peek().litToBoolean
           dut.io.enq.din.poke((0x80 + i).U)
           dut.io.enq.write.poke((!full).B)
           dut.clock.step()
@@ -52,7 +52,7 @@ class BubbleFifoTest extends AnyFlatSpec with ChiselScalatestTester {
         // Now read out the whole buffer.
         // Also watch that maximum read out is every second clock cycle.
         for (i <- 0 until 7) {
-          empty = dut.io.deq.empty.peek.litToBoolean
+          empty = dut.io.deq.empty.peek().litToBoolean
           dut.io.deq.read.poke((!empty).B)
           if (!empty) {
             dut.io.deq.dout.expect((0x80 + i).U)
@@ -62,11 +62,11 @@ class BubbleFifoTest extends AnyFlatSpec with ChiselScalatestTester {
 
         // Now write and read at maximum speed for some time.
         for (i <- 1 until 16) {
-          full = dut.io.enq.full.peek.litToBoolean
+          full = dut.io.enq.full.peek().litToBoolean
           dut.io.enq.din.poke(i.U)
           dut.io.enq.write.poke((!full).B)
 
-          empty = dut.io.deq.empty.peek.litToBoolean
+          empty = dut.io.deq.empty.peek().litToBoolean
           dut.io.deq.read.poke((!empty).B)
           dut.clock.step()
         }
