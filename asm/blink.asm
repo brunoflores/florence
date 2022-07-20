@@ -1,0 +1,6 @@
+nop
+
+addi 0x3
+subi 2
+loadi 0xab
+or r0
