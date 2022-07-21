@@ -6,7 +6,7 @@ object Alu {
   val SZ_ALU_FN = 4
   val XLEN = 32
 
-  def FN_ADD = 0.U
+  val FN_ADD = 0.U
 
   def isSub(cmd: UInt) = cmd(3)
 }
