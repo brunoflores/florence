@@ -7,6 +7,7 @@ object Alu {
   val XLEN = 32
 
   val FN_ADD = 0.U
+  val FN_SUB = 10.U
 
   def isSub(cmd: UInt) = cmd(3)
 }
@@ -26,7 +27,7 @@ class Alu extends Module {
   val in2_inv = Mux(isSub(io.fn), ~io.in2, io.in2)
   io.adder_out := io.in1 + in2_inv + isSub(io.fn)
 
-  val out = Mux(io.fn === FN_ADD, io.adder_out, 0.U)
+  val out = Mux(io.fn === FN_ADD || io.fn === FN_SUB, io.adder_out, 0.U)
 
   io.out := out
 }
