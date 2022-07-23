@@ -145,8 +145,7 @@ module mkCPU(CPU);
 
 endmodule
 
-//
-
+// Tests
 typedef Bit#(XLEN) MemAddr;
 
 typedef union tagged {
