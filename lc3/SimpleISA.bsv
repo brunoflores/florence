@@ -1,4 +1,5 @@
 import RegFile::*;
+// import "BDPI" function Bit#(32) fib (Bit#(32) n);
 
 typedef enum
   {R0 , R1 , R2 , R3 , R4 , R5 , R6 , R7} RName
@@ -78,7 +79,7 @@ interface CPU;
   method Bool done();
 endinterface
 
-module mkCPU (CPU);
+module mkCPU(CPU);
   MemIF instrMem();
   mkMem the_instrMem(instrMem);
 
@@ -112,6 +113,20 @@ module mkCPU (CPU);
     pc <= pc + 1;
   endrule
 
+  rule decode_loadc (started &&&
+                     toInstr(instrMem.get(pc)) matches
+                       tagged LoadC {rd: .rd, v: .v});
+    rf.write(rd, zeroExtend(v));
+    pc <= pc + 1;
+  endrule
+
+  rule decode_store (started &&&
+                     toInstr(instrMem.get(pc)) matches
+                       tagged Store {v: .v, addr: .addr});
+    dataMem.put(rval1(addr), rval2(v));
+    pc <= pc + 1;
+  endrule
+
   rule decode_halt (started &&&
                     toInstr(instrMem.get(pc)) matches
                       tagged Halt);
@@ -127,5 +142,65 @@ module mkCPU (CPU);
   endmethod
 
   method done = !started;
+
+endmodule
+
+//
+
+typedef Bit#(XLEN) MemAddr;
+
+typedef union tagged {
+  MemAddr WriteIMem;
+  MemAddr WriteDMem;
+  void Start;
+  void Running;
+} TestStage deriving (Eq, Bits);
+
+(* synthesize *)
+module mkCPUTest(Empty);
+  CPU cpu();
+  mkCPU the_cpu(cpu);
+
+  Reg#(TestStage) state();
+  mkReg#(WriteIMem(0)) the_state(state);
+
+  MemAddr maxInstr = 3;
+  function Instr nextInstr(MemAddr n);
+   case (n)
+     0 : return (tagged LoadC {rd: R4, v: 42});
+     1 : return (tagged LoadC {rd: R0, v: 0});
+     2 : return (tagged Store {v: R4, addr: R0});
+     3 : return (tagged Halt);
+   endcase
+   // case (n)
+   //    0 :  return (tagged LoadC {rd:R0, v:10});
+   //    1 :  return (tagged LoadC {rd:R1, v:15});
+   //    2 :  return (tagged LoadC {rd:R2, v:20});
+   //    3 :  return (tagged Add {rd:R3, ra:R0, rb:R1});
+   //    4 :  return (tagged Add {rd:R4, ra:R3, rb:R2});
+   //    5 :  return (tagged Store {v:R4, addr:R1});
+   //    6 :  return (tagged LoadC {rd:R5, v: 9});
+   //    7 :  return (tagged Jz {cd:R0, addr:R5});
+   //    8 :  return (tagged Add {rd:R4, ra:R4, rb:R4});
+   //    9 :  return (tagged Store {v:R4, addr:R0});
+   //   10 :  return (tagged Halt);
+   // endcase
+  endfunction
+
+  rule writing_InstrMem (state matches (tagged WriteIMem .n));
+     cpu.imem.put(n, zeroExtend(pack(nextInstr(n))));
+     state <= (n == maxInstr ? Start : WriteIMem (n + 1));
+  endrule
+
+  rule starting_CPU (state matches Start);
+     cpu.start;
+     state <= Running;
+  endrule
+
+  rule done (state matches Running &&& cpu.done);
+     $display("DMem location %d has value %d at time %d",
+	      0, cpu.dmem.get(0), $stime);
+     $finish(0);
+  endrule
 
 endmodule
