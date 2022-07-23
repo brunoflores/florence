@@ -16,11 +16,11 @@ typedef RName Val;
 
 // The data type for the instruction set
 typedef union tagged {
-  struct { Dest rd; Src   ra; Src rb; } Add;
-  struct { Cond cd; Addr  addr; }       Jz;
-  struct { Dest rd; Addr  addr; }       Load;
-  struct { Val  v;  Addr  addr; }       Store;
-  struct { Dest rd; Const v; }          LoadC;
+  struct {Dest rd; Src   ra;   Src rb;} Add;
+  struct {Cond cd; Addr  addr;        } Jz;
+  struct {Dest rd; Addr  addr;        } Load;
+  struct {Val  v;  Addr  addr;        } Store;
+  struct {Dest rd; Const v;}            LoadC;
   void                                  Halt;
 } Instr deriving (Bits);
 
@@ -49,9 +49,9 @@ module mkRegisterFile(RegisterFile);
   RegFile#(RName, Value) rs();
   mkRegFileWCF#(R0, R7) the_rs(rs);
 
-  method read1(addr) ; return (addr == R0 ? 0 : rs.sub(addr)) ; endmethod
-  method read2(addr) ; return (addr == R0 ? 0 : rs.sub(addr)) ; endmethod
-  method write(addr, val) =  rs.upd(addr, val) ;
+  method read1(addr); return (addr == R0 ? 0 : rs.sub(addr)); endmethod
+  method read2(addr); return (addr == R0 ? 0 : rs.sub(addr)); endmethod
+  method write(addr, val) = rs.upd(addr, val);
 endmodule
 
 // Simple Memory Model
@@ -64,8 +64,8 @@ module mkMem(MemIF);
   RegFile#(Bit#(8), Bit#(16)) arr();
   mkRegFileFull the_arr(arr);
 
-  method get(a) ; return arr.sub(truncate(a)) ; endmethod
-  method put(a, v) = arr.upd(truncate(a), v) ;
+  method get(a) ; return arr.sub(truncate(a)); endmethod
+  method put(a, v) = arr.upd(truncate(a), v);
 endmodule
 
 // The processor
@@ -94,17 +94,13 @@ module mkCPU (CPU);
   Reg#(Bool) started();
   mkReg#(False) the_started(started);
 
-  rule fetch (started);
-    // bf.enq(tuple2(pc, instrMem.get(pc)));
-    pc <= pc + 1;
-  endrule
-
   // Take a 16-bit value and convert it into the abstract representation
   function Instr toInstr(Bit#(16) i16);
     return (unpack(truncate(i16)));
   endfunction
 
-  rule decode_halt (toInstr(instrMem.get(pc)) matches (tagged Halt));
+  rule decode_halt (started &&& toInstr(instrMem.get(pc)) matches (tagged Halt));
+    // pc <= pc + 1;
     started <= False;
   endrule
 
