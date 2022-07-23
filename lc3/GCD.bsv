@@ -30,3 +30,17 @@ module mkGCD (ArithIO#(Bit#(size_t)));
       result = x;
    endmethod
 endmodule
+
+(* synthesize *)
+module mkTbGCD ();
+   ArithIO#(Bit#(32)) gcd <- mkGCD;
+
+   rule getInputs;
+      gcd.start (20, 10);
+   endrule
+
+   rule putOutput;
+      $display("Output is %d", gcd.result());
+      if (gcd.result() == 10) $finish(0);
+   endrule
+endmodule
