@@ -94,13 +94,25 @@ module mkCPU (CPU);
   Reg#(Bool) started();
   mkReg#(False) the_started(started);
 
+  // Aliases for looking up a register's value in the register file
+  function rval1(r); return rf.read1(r); endfunction
+  function rval2(r); return rf.read2(r); endfunction
+
   // Take a 16-bit value and convert it into the abstract representation
   function Instr toInstr(Bit#(16) i16);
     return (unpack(truncate(i16)));
   endfunction
 
-  rule decode_halt (started &&& toInstr(instrMem.get(pc)) matches (tagged Halt));
-    // pc <= pc + 1;
+  rule decode_add (started &&&
+                   toInstr(instrMem.get(pc)) matches
+                     tagged Add {rd: .rd, ra: .ra, rb: .rb});
+    rf.write(rd, rval1(ra) + rval2(rb));
+    pc <= pc + 1;
+  endrule
+
+  rule decode_halt (started &&&
+                    toInstr(instrMem.get(pc)) matches
+                      tagged Halt);
     started <= False;
   endrule
 
