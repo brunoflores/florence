@@ -4,8 +4,10 @@ typedef enum
   {R0 , R1 , R2 , R3 , R4 , R5 , R6 , R7} RName
 deriving (Bits, Eq);
 
-typedef Bit#(16) InstrAddr;
-typedef Bit#(16) Value;
+typedef 16 XLEN;
+
+typedef Bit#(XLEN) InstrAddr;
+typedef Bit#(XLEN) Value;
 typedef Bit#(7) Const;
 
 typedef RName Src;
@@ -56,12 +58,12 @@ endmodule
 
 // Simple Memory Model
 interface MemIF;
-  method Bit#(16) get(Bit#(16) x1);
-  method Action put(Bit#(16) x1, Bit#(16) x2);
+  method Bit#(XLEN) get(Bit#(XLEN) x1);
+  method Action put(Bit#(XLEN) x1, Bit#(XLEN) x2);
 endinterface
 
 module mkMem(MemIF);
-  RegFile#(Bit#(8), Bit#(16)) arr();
+  RegFile#(Bit#(8), Bit#(XLEN)) arr();
   mkRegFileFull the_arr(arr);
 
   method get(a) ; return arr.sub(truncate(a)); endmethod
@@ -98,9 +100,9 @@ module mkCPU (CPU);
   function rval1(r); return rf.read1(r); endfunction
   function rval2(r); return rf.read2(r); endfunction
 
-  // Take a 16-bit value and convert it into the abstract representation
-  function Instr toInstr(Bit#(16) i16);
-    return (unpack(truncate(i16)));
+  // Take a XLEN-bit value and convert it into the abstract representation
+  function Instr toInstr(Bit#(XLEN) bits);
+    return (unpack(truncate(bits)));
   endfunction
 
   rule decode_add (started &&&
