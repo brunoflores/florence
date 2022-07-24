@@ -7,3 +7,15 @@ target/
 project/
 test_run_dir/
 vivado/
+
+*.o
+*.out
+
+*.so
+
+*.dat
+
+*.bexe
+
+*.cmi
+*.cmo
