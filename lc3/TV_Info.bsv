@@ -7,21 +7,25 @@ import ISA_Decls::*;
 typedef enum {
   TRACE_RESET,
   TRACE_RET
-} Trace_Op
-deriving (Bits, Eq, FShow);
+} Trace_Op deriving (Bits, Eq, FShow);
 
 typedef struct {
-  Trace_Op op;
-  Bit#(XLEN) pc;
-  Bit#(XLEN) instr;
-} Trace_Data
-deriving (Bits);
+   Trace_Op op;
+   Bit#(XLEN) pc;
+   Bit#(XLEN) instr;
+} Trace_Data deriving (Bits);
+
+function Trace_Data mkTrace_RESET ();
+   Trace_Data td = ?;
+   td.op = TRACE_RESET;
+   return td;
+endfunction
 
 function Trace_Data mkTrace_RET(Bit#(XLEN) pc);
-  Trace_Data td = ?;
-  td.op = TRACE_RET;
-  td.pc = pc;
-  return td;
+   Trace_Data td = ?;
+   td.op = TRACE_RET;
+   td.pc = pc;
+   return td;
 endfunction
 
 // Trace_Data is encoded in module mkTV_Encode into vectors of bytes,

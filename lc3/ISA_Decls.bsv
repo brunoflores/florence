@@ -30,6 +30,13 @@ typedef union tagged {
 typedef 8 Bits_per_Byte;
 typedef Bit #(Bits_per_Byte) Byte;
 
+// Tokens are used for signalling/synchronization, and have no payload
+typedef Bit #(0) Token;
+
+// Control/Status registers
+typedef Bit #(12) CSR_Addr;
+CSR_Addr csr_addr_mcycle = 12'hB00; // Machine cycle counter
+
 // package ISA_Decls;
 //
 // import Vector :: *;
