@@ -7,6 +7,7 @@ import TV_Info::*;
 import ISA_Decls::*;
 import GetPut_Aux::*;
 import CSR_RegFile::*;
+import SoC_Map::*;
 
 // Register File
 interface RegisterFile;
@@ -73,6 +74,9 @@ typedef enum {
 
 (* synthesize *)
 module mkCPU(CPU_IFC);
+  // System address map and pc reset value
+  SoC_Map_IFC soc_map <- mkSoC_Map;
+
   // Reset requests and responses
   FIFOF #(Bool) f_reset_reqs <- mkFIFOF;
   FIFOF #(Bool) f_reset_rsps <- mkFIFOF;
@@ -117,21 +121,41 @@ module mkCPU(CPU_IFC);
   // Current verbosity
   Bit #(4) cur_verbosity = 0;
 
+  // BEGIN Functions
+  // ===========================================================================
+  function Action fa_start_ifetch (WordXL next_pc);
+    action
+	    stage1.enq (next_pc);
+    endaction
+  endfunction
+
+  // Actions to restart from Debug Mode (e.g., GDB 'continue' after a breakpoint)
+  function Action fa_restart (WordXL resume_pc);
+    action
+      fa_start_ifetch (resume_pc);
+      rg_state <= CPU_RUNNING;
+      rg_start_CPI_cycles <= mcycle;
+      rg_start_CPI_instrs <= minstret;
+    endaction
+  endfunction
+
   // Aliases for looking up a register's value in the register file
   function rval1(r); return rf.read1(r); endfunction
   function rval2(r); return rf.read2(r); endfunction
 
-  // Take a XLEN-bit value and convert it into the abstract representation
+  // Convert an XLEN-bit value into the abstract representation
   function Instr toInstr(Bit#(XLEN) bits);
-    return (unpack(truncate(bits)));
+    return (unpack (truncate (bits)));
   endfunction
+  // ===========================================================================
+  // END Functions
 
   rule rl_reset_start (rg_state == CPU_RESET1);
     let run_on_reset <- pop (f_reset_reqs);
     rg_run_on_reset <= run_on_reset;
 
     $display ("================================================================");
-    $write   ("CPU: Florence v0.0.1");
+    $display ("CPU: Florence v0.0.1");
     $display ("================================================================");
 
     rg_state <= CPU_RESET2;
@@ -145,14 +169,15 @@ module mkCPU(CPU_IFC);
   endrule: rl_reset_start
 
   rule rl_reset_complete (rg_state == CPU_RESET2);
+    WordXL dpc = truncate (soc_map.m_pc_reset_value);
     f_reset_rsps.enq (rg_run_on_reset);
 
     if (rg_run_on_reset) begin
-	  $display ("%0d: %m.rl_reset_complete: restart at pc = 0x%0h", mcycle, dpc);
-	  fa_restart (dpc);
+      $display ("%0d: %m.rl_reset_complete: restart at pc = 0x%0h", mcycle, dpc);
+      fa_restart (dpc);
     end else begin
-	 rg_state <= cpu_debug_mode;
-	 $display ("%0d: %m.rl_reset_complete: entering DEBUG_MODE", mcycle);
+      rg_state <= cpu_debug_mode;
+      $display ("%0d: %m.rl_reset_complete: entering DEBUG_MODE", mcycle);
     end
   endrule: rl_reset_complete
 
@@ -187,6 +212,7 @@ module mkCPU(CPU_IFC);
   endrule
 
   // Exported interfaces
+  // ===========================================================================
   interface imem = instrMem;
   interface dmem = dataMem;
 
@@ -197,8 +223,7 @@ module mkCPU(CPU_IFC);
   method done = !started;
 
   interface Get trace_data_out = toGet(f_trace_data);
-
-  // Reset
   interface Server server_reset = toGPServer (f_reset_reqs, f_reset_rsps);
+  // ===========================================================================
 
 endmodule: mkCPU
