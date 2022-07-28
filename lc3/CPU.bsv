@@ -8,6 +8,7 @@ import ISA_Decls::*;
 import GetPut_Aux::*;
 import CSR_RegFile::*;
 import SoC_Map::*;
+import CPU_Stage1::*;
 
 // Register File
 interface RegisterFile;
