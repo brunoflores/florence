@@ -3,6 +3,7 @@ typedef enum
 deriving (Bits, Eq);
 
 typedef 16 XLEN;
+Integer xlen = valueOf(XLEN);
 
 typedef Bit #(XLEN) WordXL; // Raw (unsigned) register data
 typedef Int #(XLEN) IntXL;  // Signed register data
@@ -36,6 +37,44 @@ typedef Bit #(0) Token;
 // Control/Status registers
 typedef Bit #(12) CSR_Addr;
 CSR_Addr csr_addr_mcycle = 12'hB00; // Machine cycle counter
+
+// MISA
+typedef struct {
+   Bit #(2) mxl;
+   Bit #(1) i;
+} MISA
+deriving (Bits);
+
+Bit #(2) misa_mxl_zero  = 0;
+Bit #(2) misa_mxl_16    = 1;
+
+function WordXL misa_to_word (MISA ms);
+   return {
+     ms.mxl,
+     0, // expands appropriately
+     ms.i
+   };
+endfunction
+
+function MISA word_to_misa (WordXL x);
+   return MISA {
+      mxl: x[xlen-1:xlen-2],
+      i: x[8]
+   };
+endfunction
+
+instance FShow #(MISA);
+  function Fmt fshow (MISA misa);
+    let fmt_mxl = case (misa.mxl)
+                    1: $format("mxl 16");
+                    default: $format("mxl unknown %0d", misa.mxl);
+                  endcase;
+    return (
+         fmt_mxl
+       + $format((misa.i == 1'b1) ? "I": "")
+    );
+  endfunction
+endinstance
 
 // package ISA_Decls;
 //
