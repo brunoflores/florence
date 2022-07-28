@@ -182,8 +182,7 @@ module mkCPU(CPU_IFC);
   endrule: rl_reset_complete
 
   rule decode_add (started &&&
-                   toInstr(instrMem.get(pc)) matches
-                     tagged Add {rd: .rd, ra: .ra, rb: .rb});
+                   toInstr(instrMem.get(pc)) matches tagged Add {rd: .rd, ra: .ra, rb: .rb});
     rf.write(rd, rval1(ra) + rval2(rb));
     pc <= pc + 1;
 
@@ -192,22 +191,19 @@ module mkCPU(CPU_IFC);
   endrule
 
   rule decode_loadc (started &&&
-                     toInstr(instrMem.get(pc)) matches
-                       tagged LoadC {rd: .rd, v: .v});
+                     toInstr(instrMem.get(pc)) matches tagged LoadC {rd: .rd, v: .v});
     rf.write(rd, zeroExtend(v));
     pc <= pc + 1;
   endrule
 
   rule decode_store (started &&&
-                     toInstr(instrMem.get(pc)) matches
-                       tagged Store {v: .v, addr: .addr});
+                     toInstr(instrMem.get(pc)) matches tagged Store {v: .v, addr: .addr});
     dataMem.put(rval1(addr), rval2(v));
     pc <= pc + 1;
   endrule
 
   rule decode_halt (started &&&
-                    toInstr(instrMem.get(pc)) matches
-                      tagged Halt);
+                    toInstr(instrMem.get(pc)) matches tagged Halt);
     started <= False;
   endrule
 
