@@ -67,9 +67,9 @@ interface CPU_IFC;
 endinterface
 
 typedef enum {
-   CPU_RESET1,
-   CPU_RESET2,
-   CPU_RUNNING
+  CPU_RESET1,
+  CPU_RESET2,
+  CPU_RUNNING
 } CPU_State deriving (Eq, Bits, FShow);
 
 (* synthesize *)
@@ -112,10 +112,10 @@ module mkCPU(CPU_IFC);
   FIFOF #(Trace_Data) f_trace_data <- mkFIFOF;
   Reg #(WordXL) rg_prev_mip <- mkReg (0);
   function Bool mip_cmd_needed ();
-     // If the MTIP, MSIP, or xEIP bits of MIP have changed, then send a MIP update
-     WordXL new_mip = csr_regfile.csr_mip_read;
-     Bool mip_has_changed = (new_mip != rg_prev_mip);
-     return mip_has_changed;
+    // If the MTIP, MSIP, or xEIP bits of MIP have changed, then send a MIP update
+    WordXL new_mip = csr_regfile.csr_mip_read;
+    Bool mip_has_changed = (new_mip != rg_prev_mip);
+    return mip_has_changed;
   endfunction: mip_cmd_needed
 
   // Current verbosity
