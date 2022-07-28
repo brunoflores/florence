@@ -9,6 +9,7 @@ import GetPut::*;
 import ISA_Decls::*;
 import GetPut_Aux::*;
 import CSR_MIE::*;
+import CSR_MIP::*;
 
 interface CSR_RegFile_IFC;
   // Reset
