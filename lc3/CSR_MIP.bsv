@@ -5,10 +5,10 @@ interface CSR_MIP_IFC;
    method Action reset;
 
    (* always_ready *)
-   method WordXL mv_read;
+   method Word mv_read;
 
    (* always_ready *)
-   method ActionValue #(WordXL) mav_write (MISA misa, WordXL wordxl);
+   method ActionValue #(Word) mav_write (MISA misa, Word wordxl);
 endinterface
 
 (* synthesize *)
@@ -16,12 +16,12 @@ module mkCSR_MIP (CSR_MIP_IFC);
   method Action reset;
   endmethod
 
-  method WordXL mv_read;
+  method Word mv_read;
     Bit #(12) new_mip = 0;
     return zeroExtend (new_mip);
   endmethod
 
-  method ActionValue #(WordXL) mav_write (MISA misa,  WordXL wordxl);
+  method ActionValue #(Word) mav_write (MISA misa,  Word wordxl);
     Bit #(12) new_mip = 0;
     return zeroExtend (new_mip);
   endmethod

@@ -10,36 +10,6 @@ import CSR_RegFile::*;
 import SoC_Map::*;
 import CPU_Stage1::*;
 
-// Register File
-interface RegisterFile;
-  method Value read1(RName x1);
-  method Value read2(RName x1);
-  method Action write(RName x1, Value x2);
-endinterface
-
-module mkRegisterFile(RegisterFile);
-
-  // The array needs to have conflict-free writing and reading.
-  // The stalling mechanism will guarantee that we never try to
-  // read and write from the same register in the same clock cycle.
-  // The reason that this needs to be conflict free is to prevent
-  // a sequential conflict between the write-back stage (writing
-  // to the array) and the decode stage (reading from the array).
-  // The stages already have to be ordered in one direction because
-  // of the buffers are one-place FIFOS with simultaneous enq/deq,
-  // so the deq side must happen first, to make room for the enq.
-  // Adding the reverse requirement (read the array before writing)
-  // causes a conflict, and some stages would never be able to fire
-  // in the same cycle.  This is not acceptable behavior.
-
-  RegFile#(RName, Value) rs();
-  mkRegFileWCF#(R0, R7) the_rs(rs);
-
-  method read1(addr); return (addr == R0 ? 0 : rs.sub(addr)); endmethod
-  method read2(addr); return (addr == R0 ? 0 : rs.sub(addr)); endmethod
-  method write(addr, val) = rs.upd(addr, val);
-endmodule
-
 // Simple Memory Model
 interface MemIF;
   method Bit#(XLEN) get(Bit#(XLEN) x1);

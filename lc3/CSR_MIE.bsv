@@ -5,10 +5,10 @@ interface CSR_MIE_IFC;
    method Action reset;
 
    (* always_ready *)
-   method WordXL mv_read;
+   method Word mv_read;
 
    (* always_ready *)
-   method ActionValue #(WordXL) mav_write (MISA misa, WordXL wordxl);
+   method ActionValue #(Word) mav_write (MISA misa, Word wordxl);
 endinterface
 
 (* synthesize *)
@@ -21,11 +21,11 @@ module mkCSR_MIE (CSR_MIE_IFC);
     rg_mie <= mie_reset_value;
   endmethod
 
-  method WordXL mv_read;
+  method Word mv_read;
     return zeroExtend (rg_mie);
   endmethod
 
-  method ActionValue #(WordXL) mav_write (MISA misa, WordXL word);
+  method ActionValue #(Word) mav_write (MISA misa, Word word);
     let mie = fv_fixup_mie (misa, truncate (word));
     rg_mie <= mie;
     return zeroExtend (mie);

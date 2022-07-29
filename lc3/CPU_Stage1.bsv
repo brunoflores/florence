@@ -2,6 +2,7 @@ import ClientServer::*;
 
 import CPU_Globals::*;
 import ISA_Decls::*;
+import GPR_RegFile::*;
 
 export CPU_Stage1_IFC (..), mkCPU_Stage1;
 

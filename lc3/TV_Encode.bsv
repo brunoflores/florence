@@ -35,7 +35,7 @@ module mkTV_Encode (TV_Encode_IFC);
    Reg #(Bool) rg_reset_done <- mkReg (True);
 
    // Keep track of last PC for more efficient encoding of incremented PCs
-   Reg #(WordXL) rg_last_pc <- mkReg (0);
+   Reg #(Word) rg_last_pc <- mkReg (0);
 
    FIFOF #(Trace_Data) f_trace_data <- mkFIFOF;
    FIFOF #(Tuple2 #(Bit #(XLEN), TV_Vec_Bytes)) f_vb <- mkFIFOF;
@@ -72,7 +72,7 @@ module mkTV_Encode (TV_Encode_IFC);
    interface Get tv_vb_out = toGet (f_vb);
 endmodule
 
-function Tuple2 #(Bit #(XLEN), Vector #(TV_VB_SIZE, Byte)) encode_pc (WordXL word);
+function Tuple2 #(Bit #(XLEN), Vector #(TV_VB_SIZE, Byte)) encode_pc (Word word);
    Vector #(TV_VB_SIZE, Byte) vb = newVector;
    Bit #(XLEN) n = 4;
    vb [0] = te_op_addl_state;

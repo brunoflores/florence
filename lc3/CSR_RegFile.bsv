@@ -17,15 +17,15 @@ interface CSR_RegFile_IFC;
 
     // CSR read (w.o. side effect)
     (* always_ready *)
-    method Maybe #(WordXL) read_csr (CSR_Addr csr_addr);
+    method Maybe #(Word) read_csr (CSR_Addr csr_addr);
 
     // Read MCYCLE
     (* always_ready *)
-    method WordXL read_csr_mcycle;
+    method Word read_csr_mcycle;
 
     // Read MIP
     (* always_ready *)
-    method WordXL csr_mip_read;
+    method Word csr_mip_read;
   endinterface: CSR_RegFile_IFC
 
   // Major states of mkCSR_RegFile module
@@ -48,8 +48,8 @@ interface CSR_RegFile_IFC;
     Reg #(Bit #(XLEN)) rg_mcycle <- mkReg (0);
     RWire #(Bit #(XLEN)) rw_mcycle <- mkRWire;
 
-    function Maybe #(WordXL) fv_csr_read (CSR_Addr csr_addr);
-      Maybe #(WordXL) m_csr_value = tagged Invalid;
+    function Maybe #(Word) fv_csr_read (CSR_Addr csr_addr);
+      Maybe #(Word) m_csr_value = tagged Invalid;
       case (csr_addr)
 	    csr_addr_mcycle: m_csr_value = tagged Valid (truncate (rg_mcycle));
 	    default: m_csr_value = tagged Invalid;
@@ -85,17 +85,17 @@ interface CSR_RegFile_IFC;
 endinterface: server_reset
 
 // CSR read (w.o. side effect)
-method Maybe #(WordXL) read_csr (CSR_Addr csr_addr);
+method Maybe #(Word) read_csr (CSR_Addr csr_addr);
   return fv_csr_read (csr_addr);
 endmethod: read_csr
 
 // Read MCYCLE
-method WordXL read_csr_mcycle;
+method Word read_csr_mcycle;
   return rg_mcycle;
 endmethod: read_csr_mcycle
 
 // Read MIP
-method WordXL csr_mip_read;
+method Word csr_mip_read;
   return csr_mip.mv_read;
 endmethod: csr_mip_read
 
