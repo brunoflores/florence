@@ -28,7 +28,8 @@ typedef enum {
   CPU_RESET1,
   CPU_RESET2,
   CPU_RUNNING
-} CPU_State deriving (Eq, Bits, FShow);
+} CPU_State
+deriving (Eq, Bits, FShow);
 
 (* synthesize *)
 module mkCPU(CPU_IFC);
@@ -56,7 +57,7 @@ module mkCPU(CPU_IFC);
   // Some commonly used CSR values
   let mcycle = csr_regfile.read_csr_mcycle;
 
-  Reg#(Word) pc <- mkReg (0);
+  Reg #(Word) pc <- mkReg (0);
 
   // The CPU leaves reset in an idle state and does not start fetching
   // instructions until this register is set to True.
@@ -69,7 +70,7 @@ module mkCPU(CPU_IFC);
     Word new_mip = csr_regfile.csr_mip_read;
     Bool mip_has_changed = (new_mip != rg_prev_mip);
     return mip_has_changed;
-  endfunction: mip_cmd_needed
+  endfunction
 
   // Current verbosity
   Bit #(4) cur_verbosity = 0;
@@ -119,7 +120,7 @@ module mkCPU(CPU_IFC);
     let trace_data = mkTrace_RESET;
     f_trace_data.enq (trace_data);
     rg_prev_mip <= 0;
-  endrule: rl_reset_start
+  endrule
 
   rule rl_reset_complete (rg_state == CPU_RESET2);
     Word dpc = truncate (soc_map.m_pc_reset_value);
@@ -132,7 +133,7 @@ module mkCPU(CPU_IFC);
       rg_state <= cpu_debug_mode;
       $display ("%0d: %m.rl_reset_complete: entering DEBUG_MODE", mcycle);
     end
-  endrule: rl_reset_complete
+  endrule
 
   // rule decode_add (started &&&
   //                  toInstr(instrMem.get(pc)) matches tagged Add {rd: .rd, ra: .ra, rb: .rb});
@@ -175,4 +176,4 @@ module mkCPU(CPU_IFC);
   interface Server server_reset = toGPServer (f_reset_reqs, f_reset_rsps);
   // ===========================================================================
 
-endmodule: mkCPU
+endmodule
