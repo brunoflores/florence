@@ -13,12 +13,12 @@ import CPU_Stage1::*;
 import MemModel::*;
 
 // The processor
-interface CPU_IFC;
+interface CPU_IFC #(numeric type imem_depth, numeric type dmem_depth);
   // Reset
   interface Server #(Bool, Bool) server_reset;
 
-  method MemIF #(8) imem();
-  method MemIF #(8) dmem();
+  method MemIF #(imem_depth) imem();
+  method MemIF #(dmem_depth) dmem();
 
   // Tandem
   interface Get #(Trace_Data) trace_data_out;
@@ -33,7 +33,7 @@ typedef enum {
 deriving (Eq, Bits, FShow);
 
 (* synthesize *)
-module mkCPU(CPU_IFC);
+module mkCPU(CPU_IFC #(imem_depth, dmem_depth));
   // System address map and pc reset value
   SoC_Map_IFC soc_map <- mkSoC_Map;
 
@@ -47,8 +47,8 @@ module mkCPU(CPU_IFC);
   Reg #(CPU_State) rg_state <- mkReg (CPU_RESET1);
 
   // Memory models
-  MemIF #(8) instrMem <- mkMem;
-  MemIF #(8) dataMem <- mkMem;
+  MemIF #(imem_depth) instrMem <- mkMem;
+  MemIF #(dmem_depth) dataMem <- mkMem;
 
   GPR_RegFile_IFC rf <- mkGPR_RegFile;
 
