@@ -19,7 +19,7 @@ interface CPU_Stage1_IFC;
 
   // Input
   (* always_ready *)
-  method Action enq (Addr next_pc);
+  method Action enq (Word next_pc);
 
   (* always_ready *)
   method Action set_full (Bool full);
