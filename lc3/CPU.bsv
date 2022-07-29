@@ -27,7 +27,8 @@ endinterface
 typedef enum {
   CPU_RESET1,
   CPU_RESET2,
-  CPU_RUNNING
+  CPU_RUNNING,
+  CPU_DEBUG_MODE
 } CPU_State
 deriving (Eq, Bits, FShow);
 
@@ -130,7 +131,7 @@ module mkCPU(CPU_IFC);
       $display ("%0d: %m.rl_reset_complete: restart at pc = 0x%0h", mcycle, dpc);
       fa_restart (dpc);
     end else begin
-      rg_state <= cpu_debug_mode;
+      rg_state <= CPU_DEBUG_MODE;
       $display ("%0d: %m.rl_reset_complete: entering DEBUG_MODE", mcycle);
     end
   endrule
