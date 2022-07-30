@@ -13,6 +13,7 @@ import TV_Info::*;
 import SoC_Map::*;
 import Core::*;
 import ISA_Decls::*;
+import UART_Model::*;
 
 // The outermost interface of the SoC
 interface SoC_Top_IFC;
@@ -52,6 +53,9 @@ module mkSoC_Top (SoC_Top_IFC);
 
    Core_IFC core <- mkCore;
 
+   // SoC IPs
+   UART_IFC uart0 <- mkUART;
+
    method Action set_verbosity (Bit #(4) to, Bit #(64) logdelay);
      core.set_verbosity (to, logdelay);
    endmethod
@@ -62,4 +66,8 @@ module mkSoC_Top (SoC_Top_IFC);
    // External real memory
    interface imem_to_raw_mem = core.cpu_imem_master;
    interface dmem_to_raw_mem = core.cpu_dmem_master;
+
+   // UART to external console
+   interface get_to_console   = uart0.get_to_console;
+   interface put_from_console = uart0.put_from_console;
 endmodule
