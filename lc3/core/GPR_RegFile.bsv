@@ -47,7 +47,7 @@ module mkGPR_RegFile(GPR_RegFile_IFC);
   rule rl_reset_loop (rg_state == RF_RESETTING);
     regfile.upd (rg_j, 0);
     rg_j <= rg_j + 1;
-    if (rg_j == 31) rg_state <= RF_RUNNING;
+    if (rg_j == 7) rg_state <= RF_RUNNING;
   endrule
 
   // Reset

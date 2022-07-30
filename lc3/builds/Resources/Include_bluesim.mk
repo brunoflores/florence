@@ -14,7 +14,7 @@ compile: build_dir
 	@echo "====================================================================="
 	@echo "INFO: Re-compiling Core"
 	bsc -u -elab -sim $(TMP_DIRS) $(BSC_COMPILATION_FLAGS) -p $(BSC_PATH) $(TOPFILE)
-	@echo "INFO: Re-compiled  Core"
+	@echo "INFO: Re-compiled Core"
 	@echo "====================================================================="
 	@echo ""
 

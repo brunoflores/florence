@@ -6,7 +6,7 @@ all: compile simulator
 # ================================================================
 # Search path for bsc for .bsv files
 
-CORE_DIRS = $(REPO)/core
+CORE_DIRS = $(REPO)/core:$(REPO)/core/lib
 
 TESTBENCH_DIRS = $(REPO)/testbench/Top:$(REPO)/testbench/SoC
 

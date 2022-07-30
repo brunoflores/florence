@@ -2,6 +2,7 @@ import RegFile::*;
 import GetPut::*;
 import FIFOF::*;
 import ClientServer::*;
+import Memory::*;
 
 import TV_Info::*;
 import ISA_Decls::*;
@@ -10,15 +11,24 @@ import GPR_RegFile::*;
 import CSR_RegFile::*;
 import SoC_Map::*;
 import CPU_Stage1::*;
-import MemModel::*;
+import Mem_Model::*;
+import Near_Mem::*;
+
+interface Mem_IFC;
+  method Bit#(32) get(Bit#(32) x1);
+  method Action put(Bit#(32) x1, Bit#(32) x2);
+endinterface
 
 // The processor
-interface CPU_IFC #(numeric type imem_depth, numeric type dmem_depth);
+interface CPU_IFC;
   // Reset
   interface Server #(Bool, Bool) server_reset;
 
-  method MemIF #(imem_depth) imem();
-  method MemIF #(dmem_depth) dmem();
+  // Set core's verbosity
+  method Action set_verbosity (Bit #(4) verbosity, Bit #(64) logdelay);
+
+  interface MemoryClient #(XLEN, XLEN) imem_master;
+  interface MemoryClient #(XLEN, XLEN) dmem_master;
 
   // Tandem
   interface Get #(Trace_Data) trace_data_out;
@@ -33,7 +43,7 @@ typedef enum {
 deriving (Eq, Bits, FShow);
 
 (* synthesize *)
-module mkCPU(CPU_IFC #(imem_depth, dmem_depth));
+module mkCPU(CPU_IFC);
   // System address map and pc reset value
   SoC_Map_IFC soc_map <- mkSoC_Map;
 
@@ -46,10 +56,6 @@ module mkCPU(CPU_IFC #(imem_depth, dmem_depth));
   // Major CPU states
   Reg #(CPU_State) rg_state <- mkReg (CPU_RESET1);
 
-  // Memory models
-  MemIF #(imem_depth) instrMem <- mkMem;
-  MemIF #(dmem_depth) dataMem <- mkMem;
-
   GPR_RegFile_IFC gpr_regfile <- mkGPR_RegFile;
 
   // Control and Status Registers (CSR)
@@ -59,6 +65,8 @@ module mkCPU(CPU_IFC #(imem_depth, dmem_depth));
   let mcycle = csr_regfile.read_csr_mcycle;
 
   Reg #(Word) pc <- mkReg (0);
+
+  Near_Mem_IFC near_mem <- mkNear_Mem;
 
   // The CPU leaves reset in an idle state and does not start fetching
   // instructions until this register is set to True.
@@ -167,8 +175,11 @@ module mkCPU(CPU_IFC #(imem_depth, dmem_depth));
 
   // Exported interfaces
   // ===========================================================================
-  interface imem = instrMem;
-  interface dmem = dataMem;
+  // interface imem = instrMem;
+  // interface dmem = dataMem;
+
+  interface imem_master = near_mem.imem_master;
+  interface dmem_master = near_mem.dmem_master;
 
   // method Action start();
   //   started <= True;
@@ -179,5 +190,10 @@ module mkCPU(CPU_IFC #(imem_depth, dmem_depth));
   interface Get trace_data_out = toGet(f_trace_data);
   interface Server server_reset = toGPServer (f_reset_reqs, f_reset_rsps);
   // ===========================================================================
+
+  method Action set_verbosity (Bit #(4) verbosity, Bit #(64) logdelay);
+    // cfg_verbosity <= verbosity;
+    // cfg_logdelay  <= logdelay;
+  endmethod
 
 endmodule

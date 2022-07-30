@@ -41,6 +41,6 @@ typedef 72 TV_VB_SIZE; // Max bytes needed for each transaction
 typedef Vector #(TV_VB_SIZE, Byte) TV_Vec_Bytes;
 
 typedef struct {
-   Bit #(32) num_bytes;
+   Bit #(XLEN) num_bytes;
    TV_Vec_Bytes vec_bytes;
 } Info_CPU_to_Verifier deriving (Bits, FShow);
