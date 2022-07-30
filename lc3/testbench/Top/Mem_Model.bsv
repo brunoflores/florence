@@ -1,4 +1,5 @@
-// A simple Memory Model
+// A simulation model of external DRAM memory.
+// Uses a register file to model memory.
 
 import RegFile::*;
 
