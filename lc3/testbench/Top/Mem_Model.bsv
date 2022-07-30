@@ -5,14 +5,10 @@ import RegFile::*;
 
 import ISA_Decls::*;
 
-interface MemIF #(numeric type  depth);
-  method Bit#(XLEN) get(Bit#(depth) x1);
-  method Action put(Bit#(depth) x1, Bit#(XLEN) x2);
+interface Mem_Model_IFC #(numeric type  depth);
+  // Read/write interface
+  interface MemoryServer #(Bits_per_Raw_Mem_Addr, Bits_per_Raw_Mem_Word) mem_server;
 endinterface
 
-module mkMem (MemIF #(depth));
-  RegFile#(Bit#(depth), Bit#(XLEN)) arr <- mkRegFileFull;
-
-  method get(a) ; return arr.sub(a); endmethod
-  method put(a, v) = arr.upd(a, v);
+module mkMem_Model (Mem_Model_IFC);
 endmodule

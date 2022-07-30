@@ -10,10 +10,13 @@ build_dir:
 
 .PHONY: compile
 compile: build_dir
+	@echo ""
+	@echo "====================================================================="
 	@echo "INFO: Re-compiling Core"
-	bsc -u -elab -sim $(TMP_DIRS) $(BSC_COMPILATION_FLAGS) \
-		-p $(BSC_PATH) $(TOPFILE)
+	bsc -u -elab -sim $(TMP_DIRS) $(BSC_COMPILATION_FLAGS) -p $(BSC_PATH) $(TOPFILE)
 	@echo "INFO: Re-compiled  Core"
+	@echo "====================================================================="
+	@echo ""
 
 # ================================================================
 # Compile and link Bluesim intermediate files into a Bluesim executable
@@ -30,6 +33,6 @@ simulator:
 	bsc -sim -parallel-sim-link 8 \
 		$(TMP_DIRS) \
 		-e $(TOPMODULE) -o ./$(SIM_EXE_FILE) \
-		$(BSC_C_FLAGS) \
-		$(REPO)/src_Testbench/Top/C_Imported_Functions.c
+		$(BSC_C_FLAGS)
+# $(REPO)/src_Testbench/Top/C_Imported_Functions.c
 	@echo "INFO: linked bsc-compiled objects into Bluesim executable"
