@@ -30,7 +30,7 @@ endinterface
 (* synthesize *)
 module mkCore(Core_IFC);
    // The CPU
-   CPU_IFC cpu <- mkCPU;
+   CPU_IFC #(8, 8) cpu <- mkCPU;
 
    // Reset requests from SoC and responses to SoC
    // 'Bool' is 'running' state
@@ -42,6 +42,6 @@ module mkCore(Core_IFC);
    rule rl_cpu_reset_from_soc_start;
       let running <- pop (f_reset_reqs);
       cpu.server_reset.request.put (running);
-      $display ("%0d: Core.rl_cpu_reset_from_soc_start", cur_cycle);
+      // $display ("%0d: Core.rl_cpu_reset_from_soc_start", cur_cycle);
    endrule
 endmodule: mkCore

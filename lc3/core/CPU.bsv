@@ -50,7 +50,7 @@ module mkCPU(CPU_IFC #(imem_depth, dmem_depth));
   MemIF #(imem_depth) instrMem <- mkMem;
   MemIF #(dmem_depth) dataMem <- mkMem;
 
-  GPR_RegFile_IFC rf <- mkGPR_RegFile;
+  GPR_RegFile_IFC gpr_regfile <- mkGPR_RegFile;
 
   // Control and Status Registers (CSR)
   CSR_RegFile_IFC csr_regfile <- mkCSR_RegFile;
@@ -76,6 +76,9 @@ module mkCPU(CPU_IFC #(imem_depth, dmem_depth));
   // Current verbosity
   Bit #(4) cur_verbosity = 0;
 
+  // Pipeline stages
+  CPU_Stage1_IFC stage1 <- mkCPU_Stage1 (cur_verbosity, gpr_regfile);
+
   // BEGIN Functions
   // ===========================================================================
   function Action fa_start_ifetch (Word next_pc);
@@ -89,8 +92,8 @@ module mkCPU(CPU_IFC #(imem_depth, dmem_depth));
     action
       fa_start_ifetch (resume_pc);
       rg_state <= CPU_RUNNING;
-      rg_start_CPI_cycles <= mcycle;
-      rg_start_CPI_instrs <= minstret;
+      // rg_start_CPI_cycles <= mcycle;
+      // rg_start_CPI_instrs <= minstret;
     endaction
   endfunction
 
